@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Reveal } from './Reveal';
 import { projects, profile, type Project } from '../data';
 
+const isDesktop = () => typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches;
+
 function ProjectItem({ project }: { project: Project }) {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(() => !isDesktop());
 
   const stackRow = project.rows.find((row) => row.key === 'stack:');
   const detailRows = project.rows.filter((row) => row !== stackRow);
