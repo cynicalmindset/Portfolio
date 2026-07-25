@@ -3,20 +3,35 @@ import { Reveal } from './Reveal';
 import { projects, profile, type Project } from '../data';
 
 function ProjectItem({ project }: { project: Project }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
+
+  const stackRow = project.rows.find((row) => row.key === 'stack:');
+  const detailRows = project.rows.filter((row) => row !== stackRow);
+  const stackTags = stackRow?.text ? stackRow.text.split(',').map((tag) => tag.trim()) : [];
 
   return (
     <Reveal className={`project${collapsed ? ' collapsed' : ''}`}>
       <div className="row" onClick={() => setCollapsed((c) => !c)}>
         <span className="sym">{project.sym}</span>
-        <span className="name">{project.name}</span>
-        <span className="desc">{project.desc}</span>
-        <span className="chev">▾</span>
+        <div className="row-main">
+          <div className="row-top">
+            <span className="name">{project.name}</span>
+            <span className="chev">▾</span>
+          </div>
+          <span className="desc">{project.desc}</span>
+          {stackTags.length > 0 && (
+            <div className="row-stack">
+              {stackTags.map((tag) => (
+                <span key={tag}>{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <div className="body">
         <p>{project.paragraph}</p>
         <div className="term-block">
-          {project.rows.map((row) => (
+          {detailRows.map((row) => (
             <div className="l" key={row.key}>
               <span className="k">{row.key}</span>
               {row.link ? (

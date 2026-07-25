@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
 import 'react-activity-calendar/tooltips.css';
 import { Reveal } from './Reveal';
@@ -20,10 +20,24 @@ function fitBlocks(containerWidth: number, weeks: number) {
   return { blockSize: 3, blockMargin: 1 };
 }
 
+// On narrow (mobile) containers, zoom into the last 4-6 months instead of
+// squeezing all 12 months into tiny, unreadable blocks.
+function monthsForWidth(containerWidth: number): number | null {
+  if (containerWidth >= 560) return null; // full year
+  if (containerWidth < 300) return 4;
+  if (containerWidth < 400) return 5;
+  return 6;
+}
+
+function weeksForMonths(months: number | null, fallbackWeeks: number) {
+  return months === null ? fallbackWeeks : Math.round(months * 4.345);
+}
+
 export function GithubActivity() {
   const [totalContributions, setTotalContributions] = useState<number | null>(null);
   const [totalFailed, setTotalFailed] = useState(false);
   const [weeksCount, setWeeksCount] = useState(53);
+  const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [{ blockSize, blockMargin }, setBlocks] = useState({ blockSize: 10, blockMargin: 3 });
 
@@ -47,10 +61,24 @@ export function GithubActivity() {
     };
   }, []);
 
+  const monthsVisible = useMemo(() => monthsForWidth(containerWidth), [containerWidth]);
+
+  const zoomToRecentMonths = useCallback(
+    <T extends { date: string }>(data: T[]): T[] => {
+      if (monthsVisible === null) return data;
+      const days = Math.round(monthsVisible * 30.44);
+      return data.slice(-days);
+    },
+    [monthsVisible]
+  );
+
   useLayoutEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const recompute = () => setBlocks(fitBlocks(el.clientWidth, weeksCount));
+    const recompute = () => {
+      setContainerWidth(el.clientWidth);
+      setBlocks(fitBlocks(el.clientWidth, weeksForMonths(monthsForWidth(el.clientWidth), weeksCount)));
+    };
     recompute();
     const ro = new ResizeObserver(recompute);
     ro.observe(el);
@@ -68,6 +96,7 @@ export function GithubActivity() {
         </div>
         <div className="embed-body calendar-body" ref={containerRef}>
           <GitHubCalendar
+            key={monthsVisible ?? 'year'}
             username={GITHUB_USERNAME}
             colorScheme="dark"
             theme={calendarTheme}
@@ -77,6 +106,7 @@ export function GithubActivity() {
             fontSize={11}
             showColorLegend={false}
             showTotalCount={false}
+            transformData={zoomToRecentMonths}
             errorMessage={`couldn't reach github.com/${GITHUB_USERNAME} — try again shortly.`}
             tooltips={{
               activity: {
@@ -91,6 +121,7 @@ export function GithubActivity() {
             : totalContributions === null
               ? 'querying contributions.db…'
               : `${totalContributions} contributions in the last year · live from github.com/${GITHUB_USERNAME}`}
+          {monthsVisible !== null && <span className="zoom-hint"> · last {monthsVisible}mo</span>}
         </div>
       </Reveal>
     </>
