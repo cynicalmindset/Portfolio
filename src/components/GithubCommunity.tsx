@@ -15,15 +15,50 @@ import {
 import { profile } from '../data';
 import { useCommunityStats } from '../hooks/useCommunityStats';
 import { useGithubActivity } from '../hooks/useGithubActivity';
+import { useTheme } from '../hooks/useTheme';
 import { timeAgo } from '../lib/githubEvents';
 import { MetricDetailModal, type MetricType } from './MetricDetailModal';
 
 const GITHUB_USERNAME = profile.githubHandle;
 
-// Actuity Light Mode Calendar Theme (Crisp monochromatic / emerald scale)
-const lightCalendarTheme = {
-  light: ['#f4f5f7', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-  dark: ['#f4f5f7', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+export type HeatmapPalette = 'emerald' | 'azure' | 'amber' | 'violet';
+
+export const HEATMAP_PALETTES: Record<
+  HeatmapPalette, 
+  { label: string; dot: string; theme: { light: string[]; dark: string[] } }
+> = {
+  emerald: {
+    label: 'Emerald',
+    dot: '#10b981',
+    theme: {
+      light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+      dark: ['#18181c', '#064e3b', '#059669', '#10b981', '#34d399'],
+    },
+  },
+  azure: {
+    label: 'Cyber Blue',
+    dot: '#38bdf8',
+    theme: {
+      light: ['#ebedf0', '#bae6fd', '#38bdf8', '#0284c7', '#0369a1'],
+      dark: ['#18181c', '#0c4a6e', '#0284c7', '#38bdf8', '#7dd3fc'],
+    },
+  },
+  amber: {
+    label: 'Solar Amber',
+    dot: '#f59e0b',
+    theme: {
+      light: ['#ebedf0', '#fde68a', '#fbbf24', '#d97706', '#b45309'],
+      dark: ['#18181c', '#78350f', '#d97706', '#f59e0b', '#fbbf24'],
+    },
+  },
+  violet: {
+    label: 'Neon Violet',
+    dot: '#a78bfa',
+    theme: {
+      light: ['#ebedf0', '#ddd6fe', '#a78bfa', '#7c3aed', '#5b21b6'],
+      dark: ['#18181c', '#4c1d95', '#7c3aed', '#a78bfa', '#c4b5fd'],
+    },
+  },
 };
 
 function fitBlocks(containerWidth: number, weeks: number) {
@@ -47,23 +82,31 @@ function weeksForMonths(months: number | null, fallbackWeeks: number) {
 }
 
 export function GithubCommunity() {
+  const { isDark } = useTheme();
   const stats = useCommunityStats(GITHUB_USERNAME);
   const activityState = useGithubActivity(GITHUB_USERNAME, 8);
   const [selectedMetric, setSelectedMetric] = useState<MetricType | null>(null);
+  const [selectedPalette, setSelectedPalette] = useState<HeatmapPalette>('emerald');
+  const [userSelectedMonths, setUserSelectedMonths] = useState<number | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [{ blockSize, blockMargin }, setBlocks] = useState({ blockSize: 10, blockMargin: 3 });
 
   const [containerWidth, setContainerWidth] = useState(0);
-  const monthsVisible = useMemo(() => monthsForWidth(containerWidth), [containerWidth]);
+  
+  // Effective visible months combines responsive container width with user selection
+  const effectiveMonths = useMemo(() => {
+    if (userSelectedMonths !== null) return userSelectedMonths;
+    return monthsForWidth(containerWidth);
+  }, [userSelectedMonths, containerWidth]);
 
   const zoomToRecentMonths = useCallback(
     <T extends { date: string }>(data: T[]): T[] => {
-      if (monthsVisible === null) return data;
-      const days = Math.round(monthsVisible * 30.44);
+      if (effectiveMonths === null) return data;
+      const days = Math.round(effectiveMonths * 30.44);
       return data.slice(-days);
     },
-    [monthsVisible]
+    [effectiveMonths]
   );
 
   useLayoutEffect(() => {
@@ -71,13 +114,15 @@ export function GithubCommunity() {
     if (!el) return;
     const recompute = () => {
       setContainerWidth(el.clientWidth);
-      setBlocks(fitBlocks(el.clientWidth, weeksForMonths(monthsForWidth(el.clientWidth), 53)));
+      setBlocks(fitBlocks(el.clientWidth, weeksForMonths(effectiveMonths, 53)));
     };
     recompute();
     const ro = new ResizeObserver(recompute);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [effectiveMonths]);
+
+  const currentThemeConfig = HEATMAP_PALETTES[selectedPalette].theme;
 
   return (
     <section className="section-block" id="community">
@@ -225,25 +270,74 @@ export function GithubCommunity() {
         onChangeMetric={setSelectedMetric}
       />
 
-      {/* GitHub Contributions Heatmap Card */}
+      {/* GitHub Contributions Heatmap Card with Theme Customization */}
       <Reveal className="actuity-heatmap-card">
         <div className="heatmap-card-head">
           <div className="heatmap-title-group">
             <BarChartIcon />
             <span className="heatmap-title">CONTRIBUTIONS_TELEMETRY.LOG</span>
           </div>
-          <div className="heatmap-meta-right">
-            <span className="heatmap-user-badge">@{GITHUB_USERNAME}</span>
-            <span className="heatmap-status-dot"></span>
+
+          {/* Customizable Heatmap Controls */}
+          <div className="heatmap-controls-row">
+            {/* Palette Switcher */}
+            <div className="heatmap-palette-picker" title="Customize Heatmap Color Palette">
+              {(Object.keys(HEATMAP_PALETTES) as HeatmapPalette[]).map((pKey) => {
+                const p = HEATMAP_PALETTES[pKey];
+                const isActive = selectedPalette === pKey;
+                return (
+                  <button
+                    key={pKey}
+                    type="button"
+                    className={`palette-dot-btn ${isActive ? 'active' : ''}`}
+                    onClick={() => setSelectedPalette(pKey)}
+                    title={`Palette: ${p.label}`}
+                    aria-label={`Select ${p.label} theme`}
+                  >
+                    <span className="palette-color-dot" style={{ backgroundColor: p.dot }} />
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Time Span Filter Switcher */}
+            <div className="heatmap-range-picker">
+              <button
+                type="button"
+                className={`range-pill-btn ${userSelectedMonths === null ? 'active' : ''}`}
+                onClick={() => setUserSelectedMonths(null)}
+              >
+                1Y
+              </button>
+              <button
+                type="button"
+                className={`range-pill-btn ${userSelectedMonths === 6 ? 'active' : ''}`}
+                onClick={() => setUserSelectedMonths(6)}
+              >
+                6M
+              </button>
+              <button
+                type="button"
+                className={`range-pill-btn ${userSelectedMonths === 3 ? 'active' : ''}`}
+                onClick={() => setUserSelectedMonths(3)}
+              >
+                3M
+              </button>
+            </div>
+
+            <div className="heatmap-meta-right">
+              <span className="heatmap-user-badge">@{GITHUB_USERNAME}</span>
+              <span className="heatmap-status-dot"></span>
+            </div>
           </div>
         </div>
 
         <div className="heatmap-card-body" ref={containerRef}>
           <GitHubCalendar
-            key={monthsVisible ?? 'year'}
+            key={`${selectedPalette}-${isDark ? 'dark' : 'light'}-${effectiveMonths ?? 'year'}`}
             username={GITHUB_USERNAME}
-            colorScheme="light"
-            theme={lightCalendarTheme}
+            colorScheme={isDark ? 'dark' : 'light'}
+            theme={currentThemeConfig}
             blockSize={blockSize}
             blockMargin={blockMargin}
             blockRadius={2}
@@ -265,7 +359,7 @@ export function GithubCommunity() {
             {stats.totalContributions !== null
               ? `${stats.totalContributions} total contributions in the last year`
               : 'Live sync active with GitHub GraphQL v4'}
-            {monthsVisible !== null && <span className="zoom-hint"> · Last {monthsVisible} months</span>}
+            {effectiveMonths !== null && <span className="zoom-hint"> · Last {effectiveMonths} months</span>}
           </div>
           <a 
             href={profile.githubUrl} 

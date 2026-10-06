@@ -7,6 +7,10 @@ import {
 import { CursorCard } from './ui/cursor-card';
 import { youtubeSpotlight } from '../data';
 import bannerMain from '../assets/banner_main.png';
+import thumb4 from '../assets/download (4).jfif'; // Research Agent (AI agents)
+import thumb7 from '../assets/download (7).jfif'; // Vibecoder & Miki (LLM systems)
+import thumb6 from '../assets/download (6).jfif'; // Ripple (Distributed protocols)
+import thumb5 from '../assets/download (5).jfif'; // Grid (3D & UIUX Designing)
 
 export function About() {
   return (
@@ -29,7 +33,39 @@ export function About() {
           >
             Workik
           </CursorCard>
-          {' '}, currently building and exploring <strong>AI agents, LLM systems, distributed protocols and UIUX Designing</strong>.
+          , currently building and exploring{' '}
+          <CursorCard
+            image={thumb4}
+            description="Research Agent — Multi-Agent CLI Engine"
+            href="#project-research-agent"
+          >
+            AI agents
+          </CursorCard>
+          ,{' '}
+          <CursorCard
+            image={thumb7}
+            description="Vibecoder & Miki — LLM Systems & Tool Calling"
+            href="#project-vibecoder"
+          >
+            LLM systems
+          </CursorCard>
+          ,{' '}
+          <CursorCard
+            image={thumb6}
+            description="Ripple — BLE P2P Gossip Protocol"
+            href="#project-ripple"
+          >
+            distributed protocols
+          </CursorCard>
+          {' '}and{' '}
+          <CursorCard
+            image={thumb5}
+            description="Grid — 3D City & UI/UX Design"
+            href="#project-grid"
+          >
+            UIUX Designing
+          </CursorCard>
+          .
         </div>
       </Reveal>
 

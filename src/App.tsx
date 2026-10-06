@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { TopBar } from './components/TopBar';
 import { Header } from './components/Header';
 import { About } from './components/About';
@@ -97,52 +98,54 @@ function App() {
   }, []);
 
   return (
-    <ToastProvider>
-      <div className="actuity-page-wrapper">
-        {/* Ambient Dynamic Background Light & Geometric Accents */}
-        <div className="ambient-spotlight-glow" aria-hidden="true" />
-        <div className="ambient-floating-grid" aria-hidden="true">
-          <span className="float-glyph glyph-1">+</span>
-          <span className="float-glyph glyph-2">×</span>
-          <span className="float-glyph glyph-3">[·]</span>
-          <span className="float-glyph glyph-4">+</span>
-          <span className="float-glyph glyph-5">▲</span>
-        </div>
-
-        {/* Full-height Structural Grid Guidelines */}
-        <div className="structural-grid-lines-overlay" aria-hidden="true">
-          <div className="structural-grid-inner-container">
-            <div className="structural-col-line col-line-left" />
-            <div className="structural-col-line col-line-1" />
-            <div className="structural-col-line col-line-2" />
-            <div className="structural-col-line col-line-3" />
-            <div className="structural-col-line col-line-right" />
+    <ThemeProvider>
+      <ToastProvider>
+        <div className="actuity-page-wrapper">
+          {/* Ambient Dynamic Background Light & Geometric Accents */}
+          <div className="ambient-spotlight-glow" aria-hidden="true" />
+          <div className="ambient-floating-grid" aria-hidden="true">
+            <span className="float-glyph glyph-1">+</span>
+            <span className="float-glyph glyph-2">×</span>
+            <span className="float-glyph glyph-3">[·]</span>
+            <span className="float-glyph glyph-4">+</span>
+            <span className="float-glyph glyph-5">▲</span>
           </div>
+
+          {/* Full-height Structural Grid Guidelines */}
+          <div className="structural-grid-lines-overlay" aria-hidden="true">
+            <div className="structural-grid-inner-container">
+              <div className="structural-col-line col-line-left" />
+              <div className="structural-col-line col-line-1" />
+              <div className="structural-col-line col-line-2" />
+              <div className="structural-col-line col-line-3" />
+              <div className="structural-col-line col-line-right" />
+            </div>
+          </div>
+
+
+          <TopBar 
+            activeSection={activeSection ?? 'about'} 
+            onOpenPalette={() => setPaletteOpen(true)} 
+          />
+
+          <main className="main-content-container">
+            <Header />
+            <About />
+            <Projects />
+            <TechStack />
+            <GithubCommunity />
+            <BooksLibrary />
+            <Contact />
+          </main>
+
+          
+          <ScrollHudGauge />
         </div>
 
-
-        <TopBar 
-          activeSection={activeSection ?? 'about'} 
-          onOpenPalette={() => setPaletteOpen(true)} 
-        />
-
-        <main className="main-content-container">
-          <Header />
-          <About />
-          <Projects />
-          <TechStack />
-          <GithubCommunity />
-          <BooksLibrary />
-          <Contact />
-        </main>
-
-        
-        <ScrollHudGauge />
-      </div>
-
-      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
-      <MatrixEasterEgg />
-    </ToastProvider>
+        <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+        <MatrixEasterEgg />
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
 

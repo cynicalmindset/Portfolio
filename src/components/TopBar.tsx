@@ -7,7 +7,9 @@ import {
   PlayIcon
 } from './Icons';
 import { FollowMe } from './FollowMe';
+import { ThemeToggle } from './ThemeToggle';
 import { profile, projects, youtubeSpotlight } from '../data';
+import bookNoLongerHuman from '../assets/No Longer Human.jfif';
 
 type NavSection = {
   id: string;
@@ -242,6 +244,17 @@ export function TopBar({
                               <ArrowRightIcon />
                             </div>
                           </div>
+                          <div className="mega-column mega-spotlight-col">
+                            <div className="mega-section-title">CURRENTLY READING</div>
+                            <div className="mega-book-preview" onClick={() => scrollTo('books')}>
+                              <img src={bookNoLongerHuman} alt="No Longer Human" className="mega-book-cover" />
+                              <div className="mega-book-info">
+                                <span className="mega-book-status-tag">CURRENTLY READING</span>
+                                <b className="mega-book-title">No Longer Human</b>
+                                <span className="mega-book-author">Osamu Dazai</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       )}
 
@@ -279,6 +292,9 @@ export function TopBar({
         <div className="nav-actions-group">
           {/* Follow Me Dropdown Component */}
           <FollowMe />
+
+          {/* Animated Dark/Light Mode Celestial Toggle */}
+          <ThemeToggle />
 
           {/* Quick Command Palette Button */}
           <button 
@@ -341,6 +357,7 @@ export function TopBar({
               <span>Command Palette</span>
             </button>
             <div className="drawer-quick-links">
+              <ThemeToggle className="drawer-theme-toggle" />
               <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="drawer-quick-btn">
                 <span>GitHub ↗</span>
               </a>
