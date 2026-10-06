@@ -3,218 +3,193 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-		<title>portfolio2</title>
+		<title>portfolio_game.exe</title>
 		<style>
+* {
+	box-sizing: border-box;
+}
 html, body, #canvas {
 	margin: 0;
 	padding: 0;
 	border: 0;
+	width: 100%;
+	height: 100%;
 }
 
 body {
-	color: white;
-	background-color: black;
+	color: #ffffff;
+	background-color: #09090b;
 	overflow: hidden;
 	touch-action: none;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 #canvas {
 	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 #canvas:focus {
 	outline: none;
 }
 
-#status, #status-splash, #status-progress {
-	position: absolute;
-	left: 0;
-	right: 0;
-}
-
-#status, #status-splash {
-	top: 0;
-	bottom: 0;
-}
-
 #status {
-	background-color: #242424;
+	position: absolute;
+	inset: 0;
+	background: #09090b;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	visibility: hidden;
+	z-index: 10;
+	padding: 24px;
 }
 
-#status-splash {
-	max-height: 100%;
-	max-width: 100%;
-	margin: auto;
-}
-
-#status-splash.show-image--false {
-	display: none;
-}
-
-#status-splash.fullsize--true {
-	height: 100%;
+.loader-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	max-width: 380px;
 	width: 100%;
-	object-fit: contain;
+	text-align: center;
 }
 
-#status-splash.use-filter--false {
-	image-rendering: pixelated;
+.loader-spinner {
+	width: 36px;
+	height: 36px;
+	border: 3px solid rgba(255, 255, 255, 0.1);
+	border-top-color: #10b981;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
 }
 
-#status-progress, #status-notice {
-	display: none;
+@keyframes spin {
+	to { transform: rotate(360deg); }
 }
 
-#status-progress {
-	bottom: 10%;
-	width: 50%;
-	margin: 0 auto;
+.loader-title {
+	font-family: 'JetBrains Mono', monospace, monospace;
+	font-size: 13px;
+	font-weight: 600;
+	color: #ffffff;
+	letter-spacing: 0.05em;
+}
+
+.progress-track {
+	width: 100%;
+	height: 6px;
+	background: rgba(255, 255, 255, 0.12);
+	border-radius: 999px;
+	overflow: hidden;
+	position: relative;
+}
+
+.progress-fill {
+	height: 100%;
+	width: 0%;
+	background: #10b981;
+	border-radius: 999px;
+	transition: width 0.15s ease;
+}
+
+.progress-subtext {
+	font-family: 'JetBrains Mono', monospace, monospace;
+	font-size: 11px;
+	color: #9ca3af;
 }
 
 #status-notice {
-	background-color: #5b3943;
-	border-radius: 0.5rem;
-	border: 1px solid #9b3943;
-	color: #e0e0e0;
-	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
-	line-height: 1.3;
-	margin: 0 2rem;
-	overflow: hidden;
-	padding: 1rem;
+	background-color: rgba(239, 68, 68, 0.15);
+	border-radius: 6px;
+	border: 1px solid rgba(239, 68, 68, 0.4);
+	color: #fca5a5;
+	font-size: 12px;
+	line-height: 1.4;
+	margin-top: 12px;
+	padding: 10px 14px;
 	text-align: center;
-	z-index: 1;
+	display: none;
 }
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="portfolio_game.icon.png" />
-<link rel="apple-touch-icon" href="portfolio_game.apple-touch-icon.png"/>
-
+		<link rel="apple-touch-icon" href="portfolio_game.apple-touch-icon.png"/>
 	</head>
 	<body>
 		<canvas id="canvas">
-			Your browser does not support the canvas tag.
+			Your browser does not support the HTML5 canvas tag.
 		</canvas>
 
-		<noscript>
-			Your browser does not support JavaScript.
-		</noscript>
-
 		<div id="status">
-			<img id="status-splash" class="show-image--true fullsize--true use-filter--true" src="portfolio_game.png" alt="">
-			<progress id="status-progress"></progress>
-			<div id="status-notice"></div>
+			<div class="loader-container">
+				<div class="loader-spinner"></div>
+				<div class="loader-title">INITIALIZING PORTFOLIO_GAME.EXE</div>
+				<div class="progress-track">
+					<div id="progress-fill" class="progress-fill"></div>
+				</div>
+				<div id="progress-text" class="progress-subtext">Streaming game engine &amp; assets...</div>
+				<div id="status-notice"></div>
+			</div>
 		</div>
 
 		<script src="portfolio_game.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"portfolio_game","experimentalVK":false,"fileSizes":{"portfolio_game.pck":56112548,"portfolio_game.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {
+	"args": [],
+	"canvasResizePolicy": 2,
+	"emscriptenPoolSize": 8,
+	"ensureCrossOriginIsolationHeaders": false,
+	"executable": "portfolio_game",
+	"experimentalVK": false,
+	"fileSizes": {
+		"portfolio_game.pck": 56112548,
+		"portfolio_game.wasm": 37700666
+	},
+	"focusCanvas": true,
+	"gdextensionLibs": [],
+	"godotPoolSize": 4
+};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
 	const statusOverlay = document.getElementById('status');
-	const statusProgress = document.getElementById('status-progress');
+	const progressFill = document.getElementById('progress-fill');
+	const progressText = document.getElementById('progress-text');
 	const statusNotice = document.getElementById('status-notice');
 
-	let initializing = true;
-	let statusMode = '';
-
-	function setStatusMode(mode) {
-		if (statusMode === mode || !initializing) {
-			return;
-		}
-		if (mode === 'hidden') {
-			statusOverlay.remove();
-			initializing = false;
-			return;
-		}
-		statusOverlay.style.visibility = 'visible';
-		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
-		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
-		statusMode = mode;
-	}
-
 	function setStatusNotice(text) {
-		while (statusNotice.lastChild) {
-			statusNotice.removeChild(statusNotice.lastChild);
-		}
-		const lines = text.split('\n');
-		lines.forEach((line) => {
-			statusNotice.appendChild(document.createTextNode(line));
-			statusNotice.appendChild(document.createElement('br'));
-		});
+		statusNotice.style.display = 'block';
+		statusNotice.textContent = text;
 	}
 
 	function displayFailureNotice(err) {
 		console.error(err);
-		if (err instanceof Error) {
-			setStatusNotice(err.message);
-		} else if (typeof err === 'string') {
-			setStatusNotice(err);
-		} else {
-			setStatusNotice('An unknown error occurred.');
-		}
-		setStatusMode('notice');
-		initializing = false;
+		setStatusNotice(err instanceof Error ? err.message : (typeof err === 'string' ? err : 'An error occurred while loading.'));
 	}
 
-	const missing = Engine.getMissingFeatures({
-		threads: GODOT_THREADS_ENABLED,
-	});
+	const totalExpectedBytes = 56112548 + 37700666; // 93.8 MB
 
-	if (missing.length !== 0) {
-		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
-			let serviceWorkerRegistrationPromise;
-			try {
-				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
-			} catch (err) {
-				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
+	engine.startGame({
+		'onProgress': function (current, total) {
+			const max = total > 0 ? total : totalExpectedBytes;
+			if (current > 0 && max > 0) {
+				const percent = Math.min(100, Math.round((current / max) * 100));
+				progressFill.style.width = percent + '%';
+				const mbCurrent = (current / (1024 * 1024)).toFixed(1);
+				const mbTotal = (max / (1024 * 1024)).toFixed(1);
+				progressText.textContent = `Downloading game assets: ${percent}% (${mbCurrent}MB / ${mbTotal}MB)`;
 			}
-			// There's a chance that installing the service worker would fix the issue
-			Promise.race([
-				serviceWorkerRegistrationPromise.then((registration) => {
-					if (registration != null) {
-						return Promise.reject(new Error('Service worker already exists.'));
-					}
-					return registration;
-				}).then(() => engine.installServiceWorker()),
-				// For some reason, `getRegistration()` can stall
-				new Promise((resolve) => {
-					setTimeout(() => resolve(), 2000);
-				}),
-			]).then(() => {
-				// Reload if there was no error.
-				window.location.reload();
-			}).catch((err) => {
-				console.error('Error while registering service worker:', err);
-			});
-		} else {
-			// Display the message as usual
-			const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
-			displayFailureNotice(missingMsg + missing.join('\n'));
+		},
+	}).then(() => {
+		if (statusOverlay) {
+			statusOverlay.style.opacity = '0';
+			statusOverlay.style.transition = 'opacity 0.3s ease';
+			setTimeout(() => statusOverlay.remove(), 300);
 		}
-	} else {
-		setStatusMode('progress');
-		engine.startGame({
-			'onProgress': function (current, total) {
-				if (current > 0 && total > 0) {
-					statusProgress.value = current;
-					statusProgress.max = total;
-				} else {
-					statusProgress.removeAttribute('value');
-					statusProgress.removeAttribute('max');
-				}
-			},
-		}).then(() => {
-			setStatusMode('hidden');
-		}, displayFailureNotice);
-	}
+	}).catch(displayFailureNotice);
 }());
 		</script>
 	</body>
 </html>
-

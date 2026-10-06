@@ -1,16 +1,19 @@
-import { useEffect, useRef, useState, type ReactNode, type ElementType, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type ElementType, type ComponentPropsWithoutRef } from 'react';
 
-export function Reveal({
+type RevealProps<T extends ElementType = 'div'> = {
+  children: ReactNode;
+  as?: T;
+} & ComponentPropsWithoutRef<T>;
+
+export function Reveal<T extends ElementType = 'div'>({
   children,
-  as: Tag = 'div',
+  as,
   className = '',
   style,
-}: {
-  children: ReactNode;
-  as?: ElementType;
-  className?: string;
-  style?: CSSProperties;
-}) {
+  id,
+  ...rest
+}: RevealProps<T>) {
+  const Tag = (as || 'div') as ElementType;
   const ref = useRef<HTMLElement | null>(null);
   const [inView, setInView] = useState(false);
 
@@ -33,15 +36,16 @@ export function Reveal({
           }
         });
       },
-      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.01, rootMargin: '120px 0px 120px 0px' }
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
   return (
-    <Tag ref={ref} className={`reveal${inView ? ' in-view' : ''}${className ? ` ${className}` : ''}`} style={style}>
+    <Tag ref={ref} id={id} className={`reveal${inView ? ' in-view' : ''}${className ? ` ${className}` : ''}`} style={style} {...rest}>
       {children}
     </Tag>
   );
 }
+

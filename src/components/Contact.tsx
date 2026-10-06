@@ -1,67 +1,78 @@
-import type { MouseEvent } from 'react';
-import { useToast } from '../context/ToastContext';
 import { Reveal } from './Reveal';
-import { socialLinks, profile } from '../data';
-
-function CopyButton({ text }: { text: string }) {
-  const showToast = useToast();
-
-  function handleCopy(e: MouseEvent) {
-    e.stopPropagation();
-    navigator.clipboard
-      ?.writeText(text)
-      .then(() => showToast(`copied: ${text}`))
-      .catch(() => showToast('copy failed — select manually'));
-  }
-
-  return (
-    <button className="copy-btn" onClick={handleCopy}>copy</button>
-  );
-}
+import { SectionHeader } from './SectionHeader';
+import { profile, socialLinks } from '../data';
+import { 
+  GithubIcon, 
+  LinkedinIcon, 
+  TwitterIcon, 
+  LeetcodeIcon,
+  CodeforcesIcon,
+  GlobeIcon,
+  MailIcon, 
+  ResumeIcon
+} from './Icons';
 
 export function Contact() {
+  const getChannelIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'github': return <GithubIcon />;
+      case 'linkedin': return <LinkedinIcon />;
+      case 'twitter': return <TwitterIcon />;
+      case 'leetcode': return <LeetcodeIcon />;
+      case 'codeforces': return <CodeforcesIcon />;
+      case 'globe': return <GlobeIcon />;
+      case 'email': return <MailIcon />;
+      case 'resume': return <ResumeIcon />;
+      default: return <GithubIcon />;
+    }
+  };
+
   return (
-    <>
-      <hr className="divider" />
-      <div className="kicker" id="contact"><span className="chevron">▾</span>contact</div>
+    <section className="section-block" id="contact">
+      <SectionHeader 
+        num="05" 
+        title="Get In Touch & Collaborate" 
+        tag="// 05_COMMUNICATION_LINK"
+      />
 
-      <Reveal className="callout">
-        <span className="prompt">&gt;</span>
-        <span>Open to <b>collaboration, internships, and interesting problems</b> — hardware, protocols, or otherwise. Reach out through whichever channel you actually check.</span>
+      {/* Simple Modern Centered Social Deck */}
+      <Reveal className="simple-social-deck-container centered-deck">
+        {/* Row of Sleek Dark Logo Tiles in Center */}
+        <div className="simple-social-tiles-row">
+          {socialLinks.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              target={item.external ? '_blank' : '_self'}
+              rel={item.external ? 'noopener noreferrer' : undefined}
+              className="simple-social-tile"
+              aria-label={`${item.label}: ${item.handle}`}
+            >
+              <div className="tile-icon-wrap">
+                {getChannelIcon(item.icon)}
+              </div>
+              <div className="tile-tooltip" role="tooltip">
+                {item.label}
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* Minimal Centered Bottom Copy */}
+        <div className="simple-social-footer-text">
+          <h3 className="simple-social-title">Connect with me</h3>
+          <p className="simple-social-sub">
+            Open for software engineering internships, open-source collaborations, and systems discussions. Feel free to reach out across any platform.
+          </p>
+        </div>
       </Reveal>
 
-      <Reveal className="term-block" style={{ marginTop: 14 }}>
-        <div className="l"><span className="k">$</span><span>ping yash-g --via</span></div>
-        <div className="l">
-          <span className="k">→</span>
-          <a className="link" href={profile.githubUrl} target="_blank" rel="noopener noreferrer">github.com/{profile.githubHandle}</a>
-          <CopyButton text={profile.githubUrl} />
-        </div>
-        <div className="l">
-          <span className="k">→</span>
-          <a className="link" href={`mailto:${profile.email}`}>{profile.email}</a>
-          <CopyButton text={profile.email} />
-        </div>
-        <div className="l">
-          <span className="k">→</span>
-          <a className="link" href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer">{profile.linkedinLabel}</a>
-          <CopyButton text={profile.linkedinUrl} />
-        </div>
-      </Reveal>
-
-      <Reveal className="contact-row" style={{ marginTop: 16 }}>
-        {socialLinks.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            {...(link.external ? { target: '_blank', rel: 'noopener' } : {})}
-          >
-            {link.label}
-          </a>
-        ))}
-      </Reveal>
-
-      <div className="last-edited"><span className="dot"></span>last edited by {profile.name} · just now</div>
-    </>
+      <div className="telemetry-last-sync">
+        <span className="sync-dot"></span>
+        <span>Maintained by {profile.name} · {new Date().getFullYear()}</span>
+      </div>
+    </section>
   );
 }
+
+
