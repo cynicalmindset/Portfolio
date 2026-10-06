@@ -30,9 +30,9 @@ export function Contact() {
   return (
     <section className="section-block" id="contact">
       <SectionHeader 
-        num="05" 
+        num="06" 
         title="Get In Touch & Collaborate" 
-        tag="// 05_COMMUNICATION_LINK"
+        tag="// 06_COMMUNICATION_LINK"
       />
 
       {/* Simple Modern Centered Social Deck */}

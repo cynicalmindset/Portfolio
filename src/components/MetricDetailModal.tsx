@@ -22,10 +22,9 @@ interface DetailItem {
   desc?: string;
 }
 
-const FALLBACK_DATA: Record<MetricType, { title: string; subtitle: string; githubUrl: string; items: DetailItem[] }> = {
+const FALLBACK_DATA: Record<MetricType, { title: string; githubUrl: string; items: DetailItem[] }> = {
   'merged-prs': {
     title: 'Merged Pull Requests',
-    subtitle: 'Public pull requests successfully reviewed & merged into open-source codebases',
     githubUrl: `https://github.com/search?q=author%3A${profile.githubHandle}+type%3Apr+is%3Amerged&s=updated&o=desc`,
     items: [
       {
@@ -76,8 +75,7 @@ const FALLBACK_DATA: Record<MetricType, { title: string; subtitle: string; githu
     ]
   },
   'total-prs': {
-    title: 'Total Pull Requests Authored',
-    subtitle: 'All pull requests authored across public repositories, features & developer tools',
+    title: 'Total Pull Requests',
     githubUrl: `https://github.com/search?q=author%3A${profile.githubHandle}+type%3Apr&s=updated&o=desc`,
     items: [
       {
@@ -123,8 +121,7 @@ const FALLBACK_DATA: Record<MetricType, { title: string; subtitle: string; githu
     ]
   },
   'issues': {
-    title: 'Issues & Technical RFCs',
-    subtitle: 'Bug reports, RFCs, architecture proposals & community issue tracking',
+    title: 'Issues & RFCs',
     githubUrl: `https://github.com/search?q=author%3A${profile.githubHandle}+type%3Aissue&s=updated&o=desc`,
     items: [
       {
@@ -166,8 +163,7 @@ const FALLBACK_DATA: Record<MetricType, { title: string; subtitle: string; githu
     ]
   },
   'orgs': {
-    title: 'Active Orgs & Contributed Ecosystems',
-    subtitle: 'Organizations, teams & open source ecosystems contributed to',
+    title: 'Active Orgs & Ecosystems',
     githubUrl: profile.githubUrl,
     items: [
       {
@@ -195,7 +191,6 @@ const FALLBACK_DATA: Record<MetricType, { title: string; subtitle: string; githu
   },
   'repos': {
     title: 'Public Repositories',
-    subtitle: `All ${profile.githubHandle} public repositories, systems, firmware & applications`,
     githubUrl: `${profile.githubUrl}?tab=repositories`,
     items: [
       {
@@ -398,7 +393,6 @@ export function MetricDetailModal({
                 <span className="modal-metric-title">{currentData.title}</span>
                 <span className="modal-metric-count-chip">{getMetricCount(metricType)}</span>
               </div>
-              <span className="modal-metric-sub">{currentData.subtitle}</span>
             </div>
           </div>
 
@@ -408,8 +402,10 @@ export function MetricDetailModal({
             onClick={onClose}
             aria-label="Close modal"
           >
-            <span>✕</span>
-            <span className="close-label">[ESC]</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
         </div>
 

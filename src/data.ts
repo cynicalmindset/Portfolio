@@ -19,9 +19,8 @@ export const profile = {
   codeforcesHandle: 'ihatecodingbtw',
   resumeUrl: 'https://drive.google.com/file/d/1DP1VtybxaM8aiv6xY8i46d7IMbTGUc6J/view?usp=drive_link',
   bio: [
-    "Software engineer and computer science undergrad driven by systems thinking, thoughtful architecture, and building from first principles.",
-    "I focus on creating fast, resilient software — bridging distributed protocols, modern cloud platforms, and intuitive developer experiences.",
-    "Currently shipping production developer tooling and AI platform features at Workik, while continuously exploring modern systems design and interactive computing."
+    "Computer science undergrad and software engineer interested in understanding systems from first principles and turning ideas into working products.",
+    "Previously a Frontend SDE Intern at Workik, currently building and exploring AI agents, LLM systems, distributed protocols and UIUX Designing."
   ],
   specs: [
     { label: 'PRIMARY FOCUS', value: 'Full-Stack Systems, Developer Tooling & Applied AI' },

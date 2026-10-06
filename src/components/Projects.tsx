@@ -9,158 +9,103 @@ import {
 import { 
   ExternalLinkIcon, 
   GithubIcon, 
-  TerminalIcon 
+  PinIcon
 } from './Icons';
+import { TechIcon } from './TechIcon';
 
-type FilterCategory = 'ALL' | 'Web & 3D' | 'Hardware & AI' | 'Protocols & Systems' | 'Developer Tools';
+interface FilterTabDef {
+  id: string;
+  label: string;
+  match: (p: Project) => boolean;
+}
+
+const FILTER_TABS: FilterTabDef[] = [
+  { id: 'All', label: 'All', match: () => true },
+  { id: 'Web', label: 'Web', match: (p) => p.category.includes('Web') },
+  { id: 'Hardware', label: 'Hardware', match: (p) => p.category.includes('Hardware') || p.category.includes('AI') },
+  { id: 'Systems', label: 'Systems', match: (p) => p.category.includes('Protocols') || p.category.includes('Systems') },
+  { id: 'Tools', label: 'Tools', match: (p) => p.category.includes('Tools') || p.category.includes('Developer') },
+];
 
 function ProjectCard({ project }: { project: Project }) {
-  const [expanded, setExpanded] = useState(false);
-
-  const liveLink = project.rows.find((r) => r.key === 'live:')?.link;
-  const srcLink = project.rows.find((r) => r.key === 'src:')?.link;
+  const liveLink = project.rows.find((r) => r.key === 'live:')?.link?.href;
+  const srcLink = project.rows.find((r) => r.key === 'src:')?.link?.href || `https://github.com/${profile.githubHandle}`;
   const stackRow = project.rows.find((r) => r.key === 'stack:');
   const stackTags = stackRow?.text ? stackRow.text.split(',').map((t) => t.trim()) : [];
 
+  const isLive = project.status === 'LIVE';
+  const primaryHref = liveLink || srcLink;
+
   return (
-    <Reveal className="actuity-project-card" id={`project-${project.id}`}>
-      {/* Top Telemetry Bar */}
-      <div className="project-card-head">
-        <div className="project-head-left">
-          <span className="project-num-tag">{project.number}</span>
-          <span className="project-category-tag">{project.category}</span>
-        </div>
-        <div className="project-head-right">
-          <span className={`project-status-chip ${project.status === 'LIVE' ? 'live' : 'wip'}`}>
-            <span className="status-dot"></span>
-            {project.status}
-          </span>
-        </div>
-      </div>
-
-      <div className="project-card-layout">
-        {/* Visual Thumbnail Frame */}
-        <div className="project-thumbnail-wrapper">
-          {project.thumbnail ? (
-            <div className="project-custom-thumb-container">
-              <img src={project.thumbnail} alt={project.name} className="project-custom-thumb" />
-              <div className="project-thumb-overlay"></div>
-              <div className="project-thumb-tech-meta">
-                <span className="thumb-dim-tag">ARTIFACT #{project.number}</span>
-              </div>
-              <div className="blank-thumb-corners">
-                <span className="c-corner tl">+</span>
-                <span className="c-corner tr">+</span>
-                <span className="c-corner bl">+</span>
-                <span className="c-corner br">+</span>
-              </div>
-            </div>
-          ) : (
-            <div className="project-blank-thumbnail">
-              <div className="blank-thumb-grid"></div>
-              {/* Animated Blueprint Laser Scanline */}
-              <div className="blank-thumb-laser-beam"></div>
-              <div className="blank-thumb-radar-circle"></div>
-
-              <div className="blank-thumb-overlay">
-                <span className="thumb-sym">{project.sym}</span>
-                <span className="thumb-proj-name">{project.name}</span>
-                <span className="thumb-dim">16 : 9 // ARTIFACT PREVIEW</span>
-              </div>
-              <div className="blank-thumb-corners">
-                <span className="c-corner tl">+</span>
-                <span className="c-corner tr">+</span>
-                <span className="c-corner bl">+</span>
-                <span className="c-corner br">+</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Project Details Content */}
-        <div className="project-card-body">
-          <div className="project-title-row">
-            <h3 className="project-name">{project.name}</h3>
-            <span className="project-sub-desc">{project.desc}</span>
+    <Reveal className="inspired-project-card" id={`project-${project.id}`}>
+      {/* Visual Thumbnail / Preview Container */}
+      <a 
+        href={primaryHref} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="project-thumb-box"
+        aria-label={`Open ${project.name}`}
+      >
+        {project.thumbnail ? (
+          <img 
+            src={project.thumbnail} 
+            alt={project.name} 
+            className="project-thumb-img" 
+            loading="lazy"
+          />
+        ) : (
+          <div className="project-thumb-fallback">
+            <span className="fallback-sym">{project.sym}</span>
+            <span className="fallback-name">{project.name}</span>
           </div>
+        )}
 
-          <p className="project-paragraph">{project.paragraph}</p>
+        {/* Thumbnail Top-Right Pin / Category Accent */}
+        <div className="thumb-top-badge">
+          <PinIcon className="thumb-pin-icon" />
+        </div>
+      </a>
 
-          {/* Technical Specs Rows */}
-          <div className="project-specs-mini-table">
-            {project.specs.map((sp) => (
-              <div key={sp.label} className="mini-spec-row">
-                <span className="mini-spec-k">{sp.label}</span>
-                <span className="mini-spec-v">{sp.value}</span>
-              </div>
-            ))}
+      {/* Project Meta & Information */}
+      <div className="project-info-wrap">
+        {/* Title & Status Pill Row */}
+        <div className="project-title-status-row">
+          <h3 className="project-main-title">
+            <a href={primaryHref} target="_blank" rel="noopener noreferrer">
+              {project.name}
+            </a>
+          </h3>
+
+          <div className={`project-status-pill ${isLive ? 'live' : 'building'}`}>
+            <span className="status-indicator-dot"></span>
+            <span>{isLive ? 'Live' : 'Building'}</span>
           </div>
+        </div>
 
-          {/* Tech Stack Pills */}
-          <div className="project-stack-pills">
+        {/* 2-Line High-Clarity Description */}
+        <p className="project-summary-text">{project.desc}</p>
+
+        {/* Bottom Row: Tech Icons + Action Link */}
+        <div className="project-card-footer-row">
+          {/* Tech Stack Icons List */}
+          <div className="project-tech-icons-strip" title={stackTags.join(', ')}>
             {stackTags.map((tag) => (
-              <span key={tag} className="stack-pill">{tag}</span>
+              <span key={tag} className="tech-icon-pill-badge" title={tag}>
+                <TechIcon name={tag} size={15} />
+              </span>
             ))}
           </div>
 
-          {/* Action Links */}
-          <div className="project-actions-row">
-            {liveLink && (
-              <a 
-                href={liveLink.href} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="project-action-btn primary"
-              >
-                <span>Live Deploy</span>
-                <ExternalLinkIcon />
-              </a>
-            )}
-
-            {srcLink && (
-              <a 
-                href={srcLink.href} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="project-action-btn secondary"
-              >
-                <GithubIcon />
-                <span>Source Code</span>
-              </a>
-            )}
-
-            <button 
-              className="project-toggle-specs-btn"
-              onClick={() => setExpanded(!expanded)}
-            >
-              <span>{expanded ? 'Hide Specs' : 'Detailed Specs'}</span>
-              <span className="caret">{expanded ? '▴' : '▾'}</span>
-            </button>
-          </div>
-
-          {/* Expanded Drawer */}
-          {expanded && (
-            <div className="project-expanded-drawer">
-              <div className="drawer-header">
-                <TerminalIcon />
-                <span>TERMINAL_OUTPUT // {project.name.toUpperCase()}</span>
-              </div>
-              <div className="drawer-rows">
-                {project.rows.map((row) => (
-                  <div key={row.key} className="drawer-row-item">
-                    <span className="drawer-k">{row.key}</span>
-                    {row.link ? (
-                      <a href={row.link.href} target="_blank" rel="noopener noreferrer" className="drawer-link">
-                        {row.link.label}
-                      </a>
-                    ) : (
-                      <span className="drawer-v">{row.text}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Direct Action Link */}
+          <a
+            href={primaryHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="project-view-link"
+          >
+            <span>{liveLink ? 'View Project' : 'View Source'}</span>
+            <span className="arrow-glyph">↗</span>
+          </a>
         </div>
       </div>
     </Reveal>
@@ -168,44 +113,49 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 export function Projects() {
-  const [selectedCat, setSelectedCat] = useState<FilterCategory>('ALL');
+  const [selectedCat, setSelectedCat] = useState<string>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 'Web';
+    }
+    return 'All';
+  });
 
-  const filteredProjects = selectedCat === 'ALL'
-    ? projects
-    : projects.filter((p) => p.category === selectedCat);
+  const activeTabDef = FILTER_TABS.find((t) => t.id === selectedCat) || FILTER_TABS[0];
+  const filteredProjects = projects.filter(activeTabDef.match);
 
   return (
     <section className="section-block" id="projects">
       <SectionHeader 
         num="02" 
-        title="Hardware, Protocols & 3D Applications" 
-        tag="// 02_SYSTEMS_CATALOG"
+        title="Projects" 
+        tag="// SELECTED_BUILDS"
       />
 
-      {/* Filter Category Tabs */}
+      {/* Filter Category Tabs (Single Word, Default Web) */}
       <div className="project-filter-tabs">
-        {(['ALL', 'Web & 3D', 'Hardware & AI', 'Protocols & Systems', 'Developer Tools'] as FilterCategory[]).map((cat) => (
-          <button
-            key={cat}
-            className={`filter-tab-btn ${selectedCat === cat ? 'active' : ''}`}
-            onClick={() => setSelectedCat(cat)}
-          >
-            {cat}
-            <span className="filter-count">
-              {cat === 'ALL' ? projects.length : projects.filter((p) => p.category === cat).length}
-            </span>
-          </button>
-        ))}
+        {FILTER_TABS.map((tab) => {
+          const count = tab.id === 'All' ? projects.length : projects.filter(tab.match).length;
+          return (
+            <button
+              key={tab.id}
+              className={`filter-tab-btn ${selectedCat === tab.id ? 'active' : ''}`}
+              onClick={() => setSelectedCat(tab.id)}
+            >
+              <span className="filter-tab-name">{tab.label}</span>
+              <span className="filter-count">{count}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Projects List */}
-      <div className="projects-grid-list">
+      {/* Projects 2-Column Grid with Generous Spacing */}
+      <div className="inspired-projects-grid">
         {filteredProjects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
       </div>
 
-      {/* GitHub Repository Link Bar */}
+      {/* GitHub Repositories Footer CTA */}
       <div className="projects-footer-cta">
         <div className="cta-text">Looking for experimental scripts &amp; historical repositories?</div>
         <a 

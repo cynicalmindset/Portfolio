@@ -105,13 +105,13 @@ export function Header() {
         <div className="banner-telemetry-bar">
           <div className="telemetry-left">
             <span className="telemetry-dot"></span>
-            <span className="telemetry-title">SIMULATION_TARGET // portfolio_game.exe</span>
+            <span className="telemetry-title">SIMULATION · portfolio_game.exe</span>
           </div>
           <div className="telemetry-right">
-            <span className="telemetry-badge">ENGINE: GODOT HTML5 / WASM</span>
+            <span className="telemetry-badge">GODOT / WASM</span>
             <span className="telemetry-badge status-ready">
               <span className="status-ping-dot"></span>
-              STATUS: READY
+              READY
             </span>
           </div>
         </div>
@@ -207,7 +207,6 @@ export function Header() {
             <div className="prop-header">
               <BriefcaseIcon />
               <span className="prop-lbl">EXPERIENCE</span>
-              <span className="prop-interactive-tag">TIMELINE ▾</span>
             </div>
             <div className="prop-val">{profile.role}</div>
 
@@ -222,7 +221,7 @@ export function Header() {
                 <div className="exp-popover-head">
                   <div className="exp-popover-title-row">
                     <BriefcaseIcon />
-                    <span className="exp-popover-title">CAREER_TIMELINE // EXPERIENCE</span>
+                    <span className="exp-popover-title">EXPERIENCE TIMELINE</span>
                   </div>
                   <div className="exp-popover-head-right">
                     <span className="exp-period-chip">2024 → PRESENT</span>

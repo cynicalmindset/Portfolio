@@ -2,10 +2,11 @@ import { Reveal } from './Reveal';
 import { SectionHeader } from './SectionHeader';
 import { 
   PlayIcon, 
-  YoutubeIcon, 
-  TerminalIcon
+  YoutubeIcon
 } from './Icons';
-import { profile, youtubeSpotlight } from '../data';
+import { CursorCard } from './ui/cursor-card';
+import { youtubeSpotlight } from '../data';
+import bannerMain from '../assets/banner_main.png';
 
 export function About() {
   return (
@@ -13,38 +14,22 @@ export function About() {
       <SectionHeader 
         num="01" 
         title="How I Build & What I Care About" 
-        tag="// 01_CAPABILITY_MATRIX"
+        tag="// 01_ABOUT_ME"
       />
 
-      {/* Technical Bio Statements */}
-      <div className="bio-statements-grid">
-        {profile.bio.map((statement, idx) => (
-          <Reveal key={idx} className="bio-card">
-            <div className="bio-prompt-symbol">&gt;</div>
-            <div className="bio-text-content">
-              {statement}
-            </div>
-          </Reveal>
-        ))}
-      </div>
-
-      {/* Actuity-Style Hardware & Systems Specification Table */}
-      <Reveal className="actuity-spec-card">
-        <div className="spec-card-header">
-          <div className="spec-header-title">
-            <TerminalIcon />
-            <span>SYSTEM_CAPABILITY_MATRIX</span>
-          </div>
-          <span className="spec-badge">VERIFIED SPEC</span>
-        </div>
-
-        <div className="spec-table-body">
-          {profile.specs.map((spec) => (
-            <div key={spec.label} className="spec-table-row">
-              <span className="spec-label-col">{spec.label}</span>
-              <span className="spec-val-col">{spec.value}</span>
-            </div>
-          ))}
+      {/* Technical Bio Statement (Unified Single Description with CursorCard) */}
+      <Reveal className="single-bio-card">
+        <div className="bio-prompt-symbol">&gt;</div>
+        <div className="single-bio-text">
+          Computer science undergrad and software engineer interested in understanding systems from first principles and turning ideas into working products. Previously a Frontend SDE Intern at{' '}
+          <CursorCard 
+            image={bannerMain} 
+            description="Ex-Frontend SDE Intern @Workik" 
+            href="https://workik.com"
+          >
+            Workik
+          </CursorCard>
+          {' '}, currently building and exploring <strong>AI agents, LLM systems, distributed protocols and UIUX Designing</strong>.
         </div>
       </Reveal>
 

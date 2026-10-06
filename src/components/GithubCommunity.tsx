@@ -90,6 +90,7 @@ export function GithubCommunity() {
       {/* Realtime GitHub Metrics Grid */}
       <div className="community-metrics-grid">
         <Reveal 
+          delay={0.02}
           className="metric-card interactive-metric-card"
           role="button"
           tabIndex={0}
@@ -115,6 +116,7 @@ export function GithubCommunity() {
         </Reveal>
 
         <Reveal 
+          delay={0.07}
           className="metric-card interactive-metric-card"
           role="button"
           tabIndex={0}
@@ -140,6 +142,7 @@ export function GithubCommunity() {
         </Reveal>
 
         <Reveal 
+          delay={0.12}
           className="metric-card interactive-metric-card"
           role="button"
           tabIndex={0}
@@ -165,6 +168,7 @@ export function GithubCommunity() {
         </Reveal>
 
         <Reveal 
+          delay={0.17}
           className="metric-card interactive-metric-card"
           role="button"
           tabIndex={0}
@@ -190,6 +194,7 @@ export function GithubCommunity() {
         </Reveal>
 
         <Reveal 
+          delay={0.22}
           className="metric-card interactive-metric-card"
           role="button"
           tabIndex={0}

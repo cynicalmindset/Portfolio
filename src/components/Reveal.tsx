@@ -3,6 +3,9 @@ import { useEffect, useRef, useState, type ReactNode, type ElementType, type Com
 type RevealProps<T extends ElementType = 'div'> = {
   children: ReactNode;
   as?: T;
+  delay?: number; // Delay in seconds (e.g. 0.1, 0.2)
+  threshold?: number;
+  rootMargin?: string;
 } & ComponentPropsWithoutRef<T>;
 
 export function Reveal<T extends ElementType = 'div'>({
@@ -11,6 +14,9 @@ export function Reveal<T extends ElementType = 'div'>({
   className = '',
   style,
   id,
+  delay = 0,
+  threshold = 0.08,
+  rootMargin = '0px 0px -40px 0px',
   ...rest
 }: RevealProps<T>) {
   const Tag = (as || 'div') as ElementType;
@@ -36,14 +42,25 @@ export function Reveal<T extends ElementType = 'div'>({
           }
         });
       },
-      { threshold: 0.01, rootMargin: '120px 0px 120px 0px' }
+      { threshold, rootMargin }
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [threshold, rootMargin]);
+
+  const customStyle = {
+    ...style,
+    ...(delay > 0 ? { transitionDelay: `${delay}s` } : {}),
+  };
 
   return (
-    <Tag ref={ref} id={id} className={`reveal${inView ? ' in-view' : ''}${className ? ` ${className}` : ''}`} style={style} {...rest}>
+    <Tag 
+      ref={ref} 
+      id={id} 
+      className={`reveal${inView ? ' in-view' : ''}${className ? ` ${className}` : ''}`} 
+      style={customStyle} 
+      {...rest}
+    >
       {children}
     </Tag>
   );

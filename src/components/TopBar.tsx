@@ -21,7 +21,8 @@ const SECTIONS: NavSection[] = [
   { id: 'projects', num: '02', label: 'PROJECTS', desc: '5 Shipped Systems, 3D Worlds & P2P Protocols' },
   { id: 'tech-stack', num: '03', label: 'STACK', desc: 'Toolchain Topology, ESP32 & Runtimes' },
   { id: 'community', num: '04', label: 'COMMUNITY', desc: 'Live GitHub Telemetry, PRs, Heatmap & Activity' },
-  { id: 'contact', num: '05', label: 'CONTACT', desc: 'Social channels, email & connect' },
+  { id: 'books', num: '05', label: 'BOOKS', desc: '11 Curated Volumes on Strategy, Mindset & Psychology' },
+  { id: 'contact', num: '06', label: 'CONTACT', desc: 'Social channels, email & connect' },
 ];
 
 export function TopBar({
@@ -229,6 +230,21 @@ export function TopBar({
                         </div>
                       )}
 
+                      {sec.id === 'books' && (
+                        <div className="mega-about-grid">
+                          <div className="mega-column">
+                            <div className="mega-section-title">CURATED READING SHELF</div>
+                            <p className="mega-text">
+                              11 key works on systems thinking, power dynamics, mastery, and psychology.
+                            </p>
+                            <div className="mega-link-action" onClick={() => scrollTo('books')}>
+                              <span>Explore 3D Bookshelf &amp; Volume Notes</span>
+                              <ArrowRightIcon />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {sec.id === 'contact' && (
                         <div className="mega-contact-grid">
                           <div className="mega-section-title">CONNECT &amp; SOCIALS</div>
@@ -301,10 +317,7 @@ export function TopBar({
                 >
                   <div className="mobile-nav-link-left">
                     <span className="tab-num">{sec.num}</span>
-                    <div className="mobile-nav-text-block">
-                      <span className="tab-label">{sec.label}</span>
-                      <span className="tab-desc">{sec.desc}</span>
-                    </div>
+                    <span className="tab-label">{sec.label}</span>
                   </div>
                   <span className="mobile-nav-arrow-badge" aria-hidden="true">
                     <ArrowRightIcon />
@@ -341,3 +354,4 @@ export function TopBar({
     </header>
   );
 }
+

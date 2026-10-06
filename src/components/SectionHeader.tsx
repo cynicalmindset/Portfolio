@@ -1,3 +1,5 @@
+import { Reveal } from './Reveal';
+
 interface SectionHeaderProps {
   num: string;
   title: string;
@@ -7,7 +9,7 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ num, title, tag, className = '' }: SectionHeaderProps) {
   return (
-    <div className={`section-header-bar technical-grid-header ${className}`}>
+    <Reveal className={`section-header-bar technical-grid-header ${className}`}>
       <span className="grid-crosshair corner-tl" aria-hidden="true">+</span>
       <span className="grid-crosshair corner-tr" aria-hidden="true">+</span>
       
@@ -21,6 +23,6 @@ export function SectionHeader({ num, title, tag, className = '' }: SectionHeader
           <span className="section-telemetry-tag">{tag}</span>
         </div>
       )}
-    </div>
+    </Reveal>
   );
 }

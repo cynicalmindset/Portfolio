@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Lenis from 'lenis';
 import { ToastProvider } from './context/ToastContext';
 import { TopBar } from './components/TopBar';
 import { Header } from './components/Header';
@@ -6,17 +7,69 @@ import { About } from './components/About';
 import { Projects } from './components/Projects';
 import { TechStack } from './components/TechStack';
 import { GithubCommunity } from './components/GithubCommunity';
+import { BooksLibrary } from './components/BooksLibrary';
 import { Contact } from './components/Contact';
 import { ScrollHudGauge } from './components/ScrollHudGauge';
 import { CommandPalette } from './components/CommandPalette';
 import { MatrixEasterEgg } from './components/MatrixEasterEgg';
 import { useScrollSpy } from './hooks/useScrollSpy';
 
-const SECTION_IDS = ['about', 'projects', 'tech-stack', 'community', 'contact'] as const;
+const SECTION_IDS = ['about', 'projects', 'tech-stack', 'community', 'books', 'contact'] as const;
 
 function App() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const activeSection = useScrollSpy(SECTION_IDS);
+
+  // Buttery-smooth inertial scroll engine via Lenis
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.25,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.8,
+      infinite: false,
+    });
+
+    let rafId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+
+    // Sync scroll laser & progress ratio
+    const unbind = lenis.on('scroll', (e: { scroll: number; limit: number }) => {
+      const ratio = e.limit > 0 ? Math.min(1, Math.max(0, e.scroll / e.limit)) : 0;
+      document.documentElement.style.setProperty('--scroll-ratio', ratio.toString());
+    });
+
+    // Smooth anchor navigation handling
+    function handleAnchorClick(e: MouseEvent) {
+      const anchor = (e.target as HTMLElement).closest('a[href^="#"]');
+      if (anchor) {
+        const href = anchor.getAttribute('href');
+        if (href && href.startsWith('#') && href.length > 1) {
+          const targetEl = document.querySelector(href);
+          if (targetEl) {
+            e.preventDefault();
+            lenis.scrollTo(targetEl as HTMLElement, { offset: -50, duration: 1.3 });
+          }
+        }
+      }
+    }
+
+    document.addEventListener('click', handleAnchorClick);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      unbind();
+      document.removeEventListener('click', handleAnchorClick);
+      lenis.destroy();
+    };
+  }, []);
 
   // Keyboard shortcut listener
   useEffect(() => {
@@ -31,23 +84,15 @@ function App() {
     return () => window.removeEventListener('keydown', onKeydown);
   }, []);
 
-  // Ambient interactive mouse spotlight & Scroll Laser Bar
+  // Ambient interactive mouse spotlight
   useEffect(() => {
     function handleMouseMove(e: MouseEvent) {
       document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
       document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
     }
-    function handleScroll() {
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      const ratio = total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0;
-      document.documentElement.style.setProperty('--scroll-ratio', ratio.toString());
-    }
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -75,10 +120,6 @@ function App() {
           </div>
         </div>
 
-        {/* Top Laser Progress Beam */}
-        <div className="top-laser-scroll-track" aria-hidden="true">
-          <div className="top-laser-scroll-progress" />
-        </div>
 
         <TopBar 
           activeSection={activeSection ?? 'about'} 
@@ -91,6 +132,7 @@ function App() {
           <Projects />
           <TechStack />
           <GithubCommunity />
+          <BooksLibrary />
           <Contact />
         </main>
 

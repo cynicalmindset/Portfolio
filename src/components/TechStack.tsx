@@ -3,6 +3,7 @@ import { Reveal } from './Reveal';
 import { SectionHeader } from './SectionHeader';
 import { stackGroups, timelineMilestones, type TimelineMilestone } from '../data';
 import { ExternalLinkIcon, CodeIcon, LayersIcon, SparklesIcon, CpuIcon } from './Icons';
+import { TechIcon } from './TechIcon';
 
 export function TechStack() {
   const [selectedMilestone, setSelectedMilestone] = useState<string | null>(null);
@@ -24,7 +25,7 @@ export function TechStack() {
     switch (step) {
       case '01': return '✦';
       case '02': return '◈';
-      case '03': return '</>';
+      case '03': return '⌥';
       case '04': return '▶';
       case '05': return '⚡';
       case '06': return '◎';
@@ -46,16 +47,16 @@ export function TechStack() {
       <SectionHeader 
         num="03" 
         title="Evolution, Milestones & Tech Stack" 
-        tag="// 03_TOOLCHAIN_TOPOLOGY"
+        tag="// TOOLCHAIN & STACK"
       />
 
       {/* Interactive Flowchart Workflow Canvas */}
       <Reveal className="flowchart-canvas-card">
-        {/* Flowchart Telemetry Bar & Controls */}
+        {/* Flowchart Header Bar & Controls */}
         <div className="flowchart-header-bar">
           <div className="flowchart-header-left">
             <span className="flowchart-live-dot"></span>
-            <span className="flowchart-header-title">ENGINEERING_FLOWCHART.V2 // PIPELINE_GRAPH</span>
+            <span className="flowchart-header-title">ENGINEERING TIMELINE &amp; JOURNEY</span>
           </div>
 
           <div className="flowchart-controls-group">
@@ -96,8 +97,8 @@ export function TechStack() {
 
             {/* Start Connector Bridge */}
             <div className="flow-connector-bridge">
-              <svg className="connector-svg" viewBox="0 0 54 36" preserveAspectRatio="none">
-                <path d="M 0 18 C 27 18, 27 18, 54 18" className="connector-path" />
+              <svg className="connector-svg" viewBox="0 0 54 40" preserveAspectRatio="none">
+                <path d="M 0 20 L 54 20" className="connector-path" />
               </svg>
             </div>
 
@@ -125,9 +126,9 @@ export function TechStack() {
                       <div className="node-type-group">
                         <span className="node-glyph">{getNodeGlyph(m.step)}</span>
                         <span className="node-cat-icon">{getCategoryIcon(m.category)}</span>
-                        <span className="node-type-name">{m.category.toUpperCase()} // STEP_{m.step}</span>
+                        <span className="node-type-name">{m.category.toUpperCase()}</span>
                       </div>
-                      <span className="node-more-dots">···</span>
+                      <span className="node-step-tag">#{m.step}</span>
                     </div>
 
                     {/* Node Primary Compact Body */}
@@ -178,7 +179,8 @@ export function TechStack() {
                         <div className="node-tags-wrap">
                           {m.tags.map((t) => (
                             <span key={t} className="node-tag-chip">
-                              {t}
+                              <TechIcon name={t} size={12} />
+                              <span>{t}</span>
                             </span>
                           ))}
                         </div>
@@ -189,11 +191,11 @@ export function TechStack() {
                     <span className="flow-port port-out"></span>
                   </div>
 
-                  {/* Bezier S-Curve Connector to Next Node */}
+                  {/* Bezier / Linear Connector to Next Node */}
                   {hasNext && (
                     <div className="flow-connector-bridge">
-                      <svg className="connector-svg" viewBox="0 0 54 36" preserveAspectRatio="none">
-                        <path d="M 0 18 C 27 18, 27 18, 54 18" className={`connector-path ${isSelected ? 'active-path' : ''}`} />
+                      <svg className="connector-svg" viewBox="0 0 54 40" preserveAspectRatio="none">
+                        <path d="M 0 20 L 54 20" className={`connector-path ${isSelected ? 'active-path' : ''}`} />
                       </svg>
                     </div>
                   )}
@@ -203,8 +205,8 @@ export function TechStack() {
 
             {/* End Milestone Pill */}
             <div className="flow-connector-bridge">
-              <svg className="connector-svg" viewBox="0 0 54 36" preserveAspectRatio="none">
-                <path d="M 0 18 C 27 18, 27 18, 54 18" className="connector-path" />
+              <svg className="connector-svg" viewBox="0 0 54 40" preserveAspectRatio="none">
+                <path d="M 0 20 L 54 20" className="connector-path" />
               </svg>
             </div>
 
@@ -247,7 +249,8 @@ export function TechStack() {
               <div className="cat-tags-wrap">
                 {group.tags.map((tag) => (
                   <span key={tag} className="tech-tag-pill">
-                    {tag}
+                    <TechIcon name={tag} size={13} />
+                    <span className="tech-tag-name">{tag}</span>
                   </span>
                 ))}
               </div>
@@ -258,4 +261,5 @@ export function TechStack() {
     </section>
   );
 }
+
 
